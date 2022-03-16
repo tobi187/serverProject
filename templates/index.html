@@ -7,7 +7,7 @@
 
     <hr class="my-4">
     <div class="upload_start">
-        <form method="post" enctype=multipart/form-data action="{{ url_for('upload') }}">
+        <form method="post" enctype=multipart/form-data action="{{ url_for('upload') }}" class="dropzone bigone">
 
             <ul id="fileList">
                 <li>
@@ -21,6 +21,8 @@
         </form>
     </div>
   </div>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.js"></script>-->
 
 <script>
     function onPlus() {
