@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="jumbotron">
+    <h1 class="display-4">Excel Reports zusammenführen</h1>
+    <p class="lead">Excel Dateien hochladen.</p>
+
+    <hr class="my-4">
+    <div class="upload_start">
+        <form method="post" enctype=multipart/form-data action="{{ url_for('upload') }}">
+
+            <ul id="fileList">
+                <li>
+                    <input type="file" name="file1">
+                </li>
+            </ul>
+            <p><a onclick="onPlus()">
+                 <span class="glyphicon glyphicon-plus">Add</span>
+            </a></p>
+            <input type="submit" value="Hochladen">
+        </form>
+    </div>
+  </div>
+
+<script>
+    function onPlus() {
+        var listLen = $('#fileList li').length
+        $('#fileList').append('<li><input type="file" name="file + listLen"></li>');
+    }
+</script>
+{% endblock %}
