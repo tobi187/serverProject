@@ -1,4 +1,6 @@
+from services.upload_service import get_ran_hash, create_output
 import os
+import tempfile
 
 from flask import Flask, redirect, url_for, render_template, request, flash
 from flask_httpauth import HTTPBasicAuth
@@ -8,9 +10,9 @@ from services.auth_service import do_auth
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
-UPLOAD_FOLDER = r'/uploads'
-ALLOWED_EXTENSIONS = ["xlsx"]
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+ALLOWED_EXTENSION = "xlsx"
+app.config["UPLOAD_FOLDER"] = os.path.join(os.getcwd(), "uploads")
+
 
 app_data = {
     "name":         "Peter's Starter Template for a Flask Web App",
@@ -24,7 +26,7 @@ app_data = {
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() == ALLOWED_EXTENSION
 
 
 @app.route("/")
@@ -43,22 +45,25 @@ def index():
     return render_template("index.html", app_data=app_data)
 
 
-@app.route("/up/", methods=["POST"])
+@app.route("/up", methods=["POST"])
 def upload():
     if request.method == "POST":
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('download_file', name=filename))
+        files = [f for f in request.files.values() if f.filename != ""]
+        if len(files) < 1:
+            return redirect(url_for("index"))
+
+        for file in files:
+            if not file or not allowed_file(file.filename):
+                return redirect(url_for("index"))
+
+        create_output(files)
+
+        return redirect(url_for("download_file"))
+
+
+@app.route("/download_file")
+def download_file():
+    return "<h1>Success</h1>"
 
 
 if __name__ == '__main__':

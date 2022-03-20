@@ -43,3 +43,10 @@ class ExcelWorker:
         pass
 
 
+def workflow(paths):
+    excel_worker = ExcelWorker()
+    for file in paths:
+        wb = pd.ExcelFile(file)
+        for sheet in wb.sheet_names:
+            sheet_df = pd.read_excel(file, engine="openpyxl", sheet_name=sheet)
+            excel_worker.write_data(sheet_df)

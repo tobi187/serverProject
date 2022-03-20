@@ -1,33 +1,37 @@
-{% extends 'layout.html' %}
-
-{% block body %}
+{% extends 'layout.html' %} {% block body %}
 <div class="jumbotron">
-    <h1 class="display-4">Excel Reports zusammenführen</h1>
-    <p class="lead">Excel Dateien hochladen.</p>
+  <h1 class="display-4">Excel Reports zusammenführen</h1>
+  <p class="lead">Excel Dateien hochladen.</p>
 
-    <hr class="my-4">
-    <div class="upload_start">
-        <form method="post" enctype=multipart/form-data action="{{ url_for('upload') }}" class="dropzone bigone">
-
-            <ul id="fileList">
-                <li>
-                    <input type="file" name="file1">
-                </li>
-            </ul>
-            <p><a onclick="onPlus()">
-                 <span class="glyphicon glyphicon-plus">Add</span>
-            </a></p>
-            <input type="submit" value="Hochladen">
-        </form>
-    </div>
+  <hr class="my-4" />
+  <div class="upload_start">
+    <form
+      method="post"
+      enctype=multipart/form-data
+      action="{{ url_for('upload') }}"
+      class="dropzone bigone"
+    >
+      <ul id="fileList">
+        <li>
+          <input type=file name="file" />
+        </li>
+      </ul>
+      <p>
+        <a onclick="onPlus()">
+          <span class="glyphicon glyphicon-plus">Add</span>
+        </a>
+      </p>
+      <input type="submit" value="Hochladen" />
+    </form>
   </div>
+</div>
 
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.js"></script>-->
 
 <script>
-    function onPlus() {
-        var listLen = $('#fileList li').length
-        $('#fileList').append('<li><input type="file" name="file + listLen"></li>');
-    }
+  function onPlus() {
+    var listLen = $("#fileList li").length;
+    $("#fileList").append('<li><input type="file" name="file' + listLen + '"></li>');
+  }
 </script>
 {% endblock %}
