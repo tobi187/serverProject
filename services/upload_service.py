@@ -1,5 +1,6 @@
-import os.path
+import os
 import tempfile
+import pandas as pd
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 import logic_combine_reports.ex_worker as excel_logic
@@ -20,4 +21,12 @@ def create_output(data_list: list[FileStorage]):
             path = os.path.join(folder, secure_filename(data.filename))
             data.save(path)
             paths.append(path)
-        excel_logic.workflow(paths)
+        # excel_logic.workflow(paths)
+
+        excel_worker = excel_logic.ExcelWorker()
+        for file in paths:
+            wb = pd.ExcelFile(file)
+            for sheet in wb.sheet_names:
+                sheet_df = pd.read_excel(file, engine="openpyxl", sheet_name=sheet)
+                excel_worker.write_data(sheet_df)
+
