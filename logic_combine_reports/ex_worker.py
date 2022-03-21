@@ -7,6 +7,7 @@ DATA_SHEET_NAME = "Daten"
 # TODO: Change that to
 warnings.simplefilter("ignore")
 
+
 class ExcelWorker:
     def __init__(self, save_file_name, base_path):
         self.start_row = 2
