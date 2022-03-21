@@ -1,9 +1,23 @@
 {% extends 'layout.html' %} {% block body %}
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index_style.css') }}">
+
 <div class="jumbotron">
   <h1 class="display-4">Excel Reports zusammenführen</h1>
   <p class="lead">Excel Dateien hochladen.</p>
 
   <hr class="my-4" />
+    <div class="d-none" id="loading">
+      <div id="fountainG">
+        <div id="fountainG_1" class="fountainG"></div>
+        <div id="fountainG_2" class="fountainG"></div>
+        <div id="fountainG_3" class="fountainG"></div>
+        <div id="fountainG_4" class="fountainG"></div>
+        <div id="fountainG_5" class="fountainG"></div>
+        <div id="fountainG_6" class="fountainG"></div>
+        <div id="fountainG_7" class="fountainG"></div>
+        <div id="fountainG_8" class="fountainG"></div>
+      </div>
+    </div>
   <div class="upload_start">
     <form
       method="post"
@@ -21,7 +35,7 @@
           <span class="glyphicon glyphicon-plus">Add</span>
         </a>
       </p>
-      <input type="submit" value="Hochladen" />
+      <input type="submit" value="Hochladen" onclick="showSpinner()" />
     </form>
   </div>
 </div>
@@ -33,5 +47,11 @@
     var listLen = $("#fileList li").length;
     $("#fileList").append('<li><input type="file" name="file' + listLen + '"></li>');
   }
+
+  function showSpinner() {
+    $("#loading").removeClass("d-none")
+    $("#upload_start").addClass("blurDiv")
+  }
+
 </script>
 {% endblock %}

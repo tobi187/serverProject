@@ -1,12 +1,10 @@
-from services.upload_service import get_ran_hash, create_output
-import os
-import tempfile
-
-from flask import Flask, redirect, url_for, render_template, request, flash
+from flask import Flask, redirect, url_for, render_template, request, send_file
 from flask_httpauth import HTTPBasicAuth
-from werkzeug.utils import secure_filename
-
 from services.auth_service import do_auth
+from services.upload_service import create_output
+import os
+import io
+
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -56,14 +54,26 @@ def upload():
             if not file or not allowed_file(file.filename):
                 return redirect(url_for("index"))
 
-        create_output(files)
+        file_name = create_output(files, app.root_path)
 
-        return redirect(url_for("download_file"))
+        return redirect(url_for("download_file", name=file_name))
 
 
-@app.route("/download_file")
-def download_file():
-    return "<h1>Success</h1>"
+@app.route("/download_file/<name>")
+def download_file(name: str):
+    exel_data = io.BytesIO()
+    file_path = app.config["UPLOAD_FOLDER"] + "/" + name
+
+    with open(file_path, "rb") as data:
+        exel_data.write(data.read())
+        exel_data.seek(0)
+
+    os.remove(file_path)
+
+    send_file(exel_data, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                     attachment_filename='combined_reports.xlsx')
+
+    return redirect(url_for("index"))
 
 
 if __name__ == '__main__':

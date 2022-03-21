@@ -1,3 +1,4 @@
+import os
 from openpyxl import Workbook, load_workbook
 import pandas as pd
 
@@ -5,10 +6,12 @@ DATA_SHEET_NAME = "Daten"
 
 
 class ExcelWorker:
-    def __init__(self):
+    def __init__(self, save_file_name, base_path):
         self.start_row = 2
         self.col_names = []
+        self.save_path = os.path.join(base_path, "uploads", save_file_name)
         self.double_headers = {"Keyword- oder Produkt-Targeting": "Keyword", "Gesamtumsatz für Werbung (ACoS)": "ACOS ", "Verkäufe ": "14 Tage, Umsatz gesamt", "14 Tage, Einheiten gesamt": "Einheiten insgesamt", "Anzeigegruppe ": "Anzeigegruppenname", "SKU ": "Beworbene SKU", "ASIN ": "Beworbene ASIN"}
+        self.generate_excel()
 
     def write_data(self, df: pd.DataFrame):
 
@@ -24,8 +27,7 @@ class ExcelWorker:
                 col_dic[header] = len(self.col_names) + 1
                 self.col_names.append(header)
 
-        wb = load_workbook()
-        wb.create_sheet(DATA_SHEET_NAME)
+        wb = load_workbook(self.save_path)
         sheet = wb[DATA_SHEET_NAME]
 
         for col_name, col_index in col_dic.items():
@@ -36,17 +38,11 @@ class ExcelWorker:
             sheet.cell(row=1, column=index + 1).value = col
 
         self.start_row += len(df[df.keys()[0]]) + 1
-        wb.save(self.file_path)
+        wb.save(self.save_path)
 
-
-    def generate_excel(self, file_path):
-        pass
-
-
-# def workflow(paths):
-#     excel_worker = ExcelWorker()
-#     for file in paths:
-#         wb = pd.ExcelFile(file)
-#         for sheet in wb.sheet_names:
-#             sheet_df = pd.read_excel(file, engine="openpyxl", sheet_name=sheet)
-#             excel_worker.write_data(sheet_df)
+    def generate_excel(self):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = DATA_SHEET_NAME
+        wb.save(self.save_path)
+        wb.close()
