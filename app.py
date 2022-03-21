@@ -9,7 +9,7 @@ import io
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 ALLOWED_EXTENSION = "xlsx"
-app.config["UPLOAD_FOLDER"] = os.path.join(os.getcwd(), "uploads")
+app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads")
 
 
 app_data = {
