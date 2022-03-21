@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import logic_combine_reports.ex_worker as excel_logic
 import string
 import random
+import warnings
 
 
 def get_ran_hash(length) -> str:
@@ -16,6 +17,9 @@ def get_ran_hash(length) -> str:
 def create_output(data_list: list[FileStorage], base_path: str) -> str:
 
     file_name = get_ran_hash(10) + ".xlsx"
+
+    # TODO: probably should change that some time
+    warnings.simplefilter("ignore")
 
     with tempfile.TemporaryDirectory() as folder:
 
