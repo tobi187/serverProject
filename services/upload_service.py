@@ -30,7 +30,7 @@ def create_output(data_list: list[FileStorage], base_path: str) -> str:
         excel_worker = excel_logic.ExcelWorker(file_name, base_path)
 
         for file in paths:
-            wb = pd.ExcelFile(file)
+            wb = pd.ExcelFile(file, engine="openpyxl")
             for sheet in wb.sheet_names:
                 sheet_df = pd.read_excel(file, engine="openpyxl", sheet_name=sheet)
                 excel_worker.write_data(sheet_df)

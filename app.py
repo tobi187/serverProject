@@ -62,7 +62,7 @@ def upload():
 @app.route("/download_file/<name>")
 def download_file(name: str):
     exel_data = io.BytesIO()
-    file_path = app.config["UPLOAD_FOLDER"] + "/" + name
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], name)
 
     with open(file_path, "rb") as data:
         exel_data.write(data.read())
@@ -70,10 +70,8 @@ def download_file(name: str):
 
     os.remove(file_path)
 
-    send_file(exel_data, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                     attachment_filename='combined_reports.xlsx')
-
-    return redirect(url_for("index"))
+    return send_file(exel_data, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                     download_name='combined_reports.xlsx')
 
 
 if __name__ == '__main__':
