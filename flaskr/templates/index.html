@@ -1,0 +1,33 @@
+{% extends 'layout.html' %} {% block body %}
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/index_style.css') }}">
+
+<div class="jumbotron">
+  <h1 class="display-4">Excel Reports zusammenführen</h1>
+  <p class="lead">Excel Dateien hochladen.</p>
+
+  <hr class="my-4" />
+  <div class="upload_start">
+    <form
+      method="post"
+      enctype=multipart/form-data
+      action="{{ url_for('routes.upload') }}"
+      class="dropzone bigone"
+    >
+      <ul id="fileList">
+        <li>
+          <input type=file name="file" />
+        </li>
+      </ul>
+      <p>
+        <a onclick="onPlus()">
+          <span class="glyphicon glyphicon-plus">Add</span>
+        </a>
+      </p>
+      <input type="submit" value="Hochladen" onclick="showSpinner()" />
+    </form>
+  </div>
+</div>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.js"></script>-->
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

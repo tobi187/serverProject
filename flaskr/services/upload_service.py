@@ -3,14 +3,14 @@ import tempfile
 import pandas as pd
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
-from flaskr.logic import combine_reports as excel_logic
+from flaskr.logic.combine_reports import ex_worker as excel_logic
 import string
 import random
 import warnings
 
 
 def get_ran_hash(length) -> str:
-    phrase = [random.choice(string.ascii_letters) for i in range(length)]
+    phrase = [random.choice(string.ascii_letters) for _ in range(length)]
     return "".join(phrase)
 
 
@@ -31,7 +31,7 @@ def create_output(data_list: list[FileStorage], base_path: str) -> str:
             paths.append(path)
         # excel_logic.workflow(paths)
 
-        excel_worker = excel_logic.ExcelWorker(file_name, base_path)
+        excel_worker = excel_logic.ExcelWorker(file_name, os.getcwd())
 
         for file in paths:
             wb = pd.ExcelFile(file, engine="openpyxl")

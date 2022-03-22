@@ -1,8 +1,11 @@
-FROM ubuntu:latest
-RUN apt-get update -y
-RUN apt-get install -y python3-pip python3-dev build-essential
+FROM python:3.10
 COPY . /app
-WORKDIR /app
-RUN pip install -r requirements.txt 
-ENTRYPOINT ["python3"]
-CMD ["app.py"]
+WORKDIR usr/src/app
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+RUN touch /var/celerylog.log
+COPY . .

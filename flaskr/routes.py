@@ -1,7 +1,8 @@
-from flask import redirect, url_for, render_template, request, send_file
+from flask import redirect, url_for, render_template, request, send_file, jsonify
 from flask_httpauth import HTTPBasicAuth
-from services.upload_service import create_output
-from services.auth_service import do_auth
+from flaskr import tasks
+from flaskr.services.upload_service import create_output
+from  flaskr.services.auth_service import do_auth
 from flask import Blueprint
 import os
 import io
@@ -54,15 +55,19 @@ def upload():
             if not file or not allowed_file(file.filename):
                 return redirect(url_for("routes.index"))
 
-        file_name = create_output(files, app.root_path)
+        # file_name = create_output(files, os.getcwd())
+        #
+        # return redirect(url_for("routes.download_file", name=file_name))
 
-        return redirect(url_for("routes.download_file", name=file_name))
+        tasks.create_task.delay(files)
+
+        return "<h1>Loading</h1>"
 
 
 @bp.route("/download_file/<name>")
 def download_file(name: str):
     exel_data = io.BytesIO()
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], name)
+    file_path = os.path.join(os.getcwd(), "uploads", name)
 
     with open(file_path, "rb") as data:
         exel_data.write(data.read())
