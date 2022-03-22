@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import logic_combine_reports.ex_worker as excel_logic
 import string
 import random
+import warnings
 
 
 def get_ran_hash(length) -> str:
@@ -16,6 +17,9 @@ def get_ran_hash(length) -> str:
 def create_output(data_list: list[FileStorage], base_path: str) -> str:
 
     file_name = get_ran_hash(10) + ".xlsx"
+
+    # TODO: probably should change that some time
+    warnings.simplefilter("ignore")
 
     with tempfile.TemporaryDirectory() as folder:
 
@@ -30,7 +34,7 @@ def create_output(data_list: list[FileStorage], base_path: str) -> str:
         excel_worker = excel_logic.ExcelWorker(file_name, base_path)
 
         for file in paths:
-            wb = pd.ExcelFile(file)
+            wb = pd.ExcelFile(file, engine="openpyxl")
             for sheet in wb.sheet_names:
                 sheet_df = pd.read_excel(file, engine="openpyxl", sheet_name=sheet)
                 excel_worker.write_data(sheet_df)

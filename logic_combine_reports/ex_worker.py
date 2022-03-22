@@ -1,8 +1,11 @@
 import os
+import warnings
 from openpyxl import Workbook, load_workbook
 import pandas as pd
 
 DATA_SHEET_NAME = "Daten"
+# TODO: Change that to
+warnings.simplefilter("ignore")
 
 
 class ExcelWorker:
