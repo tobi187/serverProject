@@ -8,6 +8,7 @@ import io
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+port = int(os.environ.get("PORT", 5000))
 ALLOWED_EXTENSION = "xlsx"
 app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads")
 
