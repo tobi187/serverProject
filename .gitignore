@@ -120,11 +120,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
+# Spyder flaskr settings
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope flaskr settings
 .ropeproject
 
 # mkdocs documentation

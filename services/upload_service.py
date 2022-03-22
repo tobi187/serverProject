@@ -3,7 +3,7 @@ import tempfile
 import pandas as pd
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
-import logic_combine_reports.ex_worker as excel_logic
+from flaskr.logic import combine_reports as excel_logic
 import string
 import random
 import warnings

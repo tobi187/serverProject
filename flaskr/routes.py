@@ -1,17 +1,14 @@
-from flask import Flask, redirect, url_for, render_template, request, send_file
+from flask import redirect, url_for, render_template, request, send_file
 from flask_httpauth import HTTPBasicAuth
-from services.auth_service import do_auth
 from services.upload_service import create_output
+from services.auth_service import do_auth
+from flask import Blueprint
 import os
 import io
 
 
-app = Flask(__name__)
 auth = HTTPBasicAuth()
-port = int(os.environ.get("PORT", 5000))
 ALLOWED_EXTENSION = "xlsx"
-app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads")
-
 
 app_data = {
     "name":         "Peter's Starter Template for a Flask Web App",
@@ -22,15 +19,12 @@ app_data = {
     "keywords":     "flask, webapp, template, basic"
 }
 
+bp = Blueprint("routes", __name__)
+
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() == ALLOWED_EXTENSION
-
-
-@app.route("/")
-def start():
-    return redirect(url_for("index"))
 
 
 @auth.verify_password
@@ -38,29 +32,34 @@ def verify_password(username, password):
     return do_auth(username, password)
 
 
-@app.route("/overview/combine")
+@bp.route("/")
+def start():
+    return redirect(url_for("routes.index"))
+
+
+@bp.route("/overview/combine")
 @auth.login_required()
 def index():
     return render_template("index.html", app_data=app_data)
 
 
-@app.route("/up", methods=["POST"])
+@bp.route("/up", methods=["POST"])
 def upload():
     if request.method == "POST":
         files = [f for f in request.files.values() if f.filename != ""]
         if len(files) < 1:
-            return redirect(url_for("index"))
+            return redirect(url_for("routes.index"))
 
         for file in files:
             if not file or not allowed_file(file.filename):
-                return redirect(url_for("index"))
+                return redirect(url_for("routes.index"))
 
         file_name = create_output(files, app.root_path)
 
-        return redirect(url_for("download_file", name=file_name))
+        return redirect(url_for("routes.download_file", name=file_name))
 
 
-@app.route("/download_file/<name>")
+@bp.route("/download_file/<name>")
 def download_file(name: str):
     exel_data = io.BytesIO()
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], name)
@@ -73,7 +72,3 @@ def download_file(name: str):
 
     return send_file(exel_data, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                      download_name='combined_reports.xlsx')
-
-
-if __name__ == '__main__':
-    app.run()
