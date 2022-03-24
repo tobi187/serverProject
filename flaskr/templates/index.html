@@ -5,12 +5,43 @@
   <h1 class="display-4">Excel Reports zusammenführen</h1>
   <p class="lead">Excel Dateien hochladen.</p>
 
+  <div id="linkstorage" data-link='{{ dl }}'></div>
+
   <hr class="my-4" />
+
+  {% if dl != "" %}
+    <div id="downloading" class="text-center">
+      <div class="spinners">
+        <div id="fountainG">
+          <div id="fountainG_1" class="fountainG"></div>
+          <div id="fountainG_2" class="fountainG"></div>
+          <div id="fountainG_3" class="fountainG"></div>
+          <div id="fountainG_4" class="fountainG"></div>
+          <div id="fountainG_5" class="fountainG"></div>
+          <div id="fountainG_6" class="fountainG"></div>
+          <div id="fountainG_7" class="fountainG"></div>
+          <div id="fountainG_8" class="fountainG"></div>  
+        </div>
+      </div>
+      <div class="statusMessages">
+        <p>
+          Status: <span id="status">...</span>
+        </p>
+        <p>
+          Progress: <span id="amDone">0</span> von <span id="amGes">0</span> done 
+        </p>
+        <p>
+          <a type="button" href="#" class="btn hide" id="dlButton">Download</a>
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
   <div class="upload_start">
     <form
       method="post"
       enctype=multipart/form-data
-      action="{{ url_for('routes.upload') }}"
+      action="{{ url_for('routes.index') }}"
       class="dropzone bigone"
     >
       <ul id="fileList">
@@ -23,7 +54,7 @@
           <span class="glyphicon glyphicon-plus">Add</span>
         </a>
       </p>
-      <input type="submit" value="Hochladen" onclick="showSpinner()" />
+      <input type="submit" value="Hochladen" />
     </form>
   </div>
 </div>
