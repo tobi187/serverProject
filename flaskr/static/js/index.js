@@ -26,19 +26,21 @@ function updateProgress(status_url) {
 
         if (data['state'] != 'PENDING' && data['state'] != 'WORKING') {
             if ("result" in data) {
-                $.ajax({
-                    type: "POST",
-                    url: "/dl_test" ,
-                    //contentType: 'application/json;charset=UTF-8',
-                    data : {'file_name': data["result"]},
-                    success: function() {
-                        alert("nice")
-                        //window.location.href = "/overview/combine"
-                    },
-                    error: function() {
-                        alert("error")
-                    }
-                })
+                $('#dlButton').attr('href', '/dl_test/' + data["result"])
+                $('#dlButton').removeClass('hide')
+                $('#dlButton').addClass('btn-primary')
+//                $.ajax({
+//                    type: "GET",
+//                    url: "/dl_test/" + ,
+//                    //contentType: 'application/json;charset=UTF-8',
+//                    success: function() {
+//
+//                        //window.location.href = "/overview/combine"
+//                    },
+//                    error: function() {
+//                        alert("error")
+//                    }
+//                })
             } else {
                 console.log("Problem: " + data["state"])
             }

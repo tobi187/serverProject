@@ -111,10 +111,9 @@ def download_file(name: str):
 # b
 
 
-@bp.route("/dl_test", methods=["POST"])
-def dl_test():
-    name = request.form["file_name"]
-    return name
+@bp.route("/dl_test/<name>")
+def dl_test(name: str):
+    # name = request.form["file_name"]
     exel_data = io.BytesIO()
     file_path = os.path.join(os.getcwd(), "uploads", name)
 
