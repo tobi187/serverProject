@@ -1,43 +1,27 @@
-import os
-import tempfile
-import pandas as pd
-from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
-import logic_combine_reports.ex_worker as excel_logic
-import string
-import random
-import warnings
+import dataclasses
+import json
 
 
-def get_ran_hash(length) -> str:
-    phrase = [random.choice(string.ascii_letters) for i in range(length)]
-    return "".join(phrase)
+@dataclasses.dataclass
+class FileData:
+    name: str
+    author: str
+    ending: str  # DateiEndung: txt, pptx usw.
+    date: str
+
+    def create_json(self):
+        return {
+            "name": self.name,
+            "author": self.author,
+            "ending": self.ending,
+            "date": self.date
+        }
 
 
-def create_output(data_list: list[FileStorage], base_path: str) -> str:
-
-    file_name = get_ran_hash(10) + ".xlsx"
-
-    # TODO: probably should change that some time
-    warnings.simplefilter("ignore")
-
-    with tempfile.TemporaryDirectory() as folder:
-
-        paths = []
-
-        for data in data_list:
-            path = os.path.join(folder, secure_filename(data.filename))
-            data.save(path)
-            paths.append(path)
-        # excel_logic.workflow(paths)
-
-        excel_worker = excel_logic.ExcelWorker(file_name, base_path)
-
-        for file in paths:
-            wb = pd.ExcelFile(file, engine="openpyxl")
-            for sheet in wb.sheet_names:
-                sheet_df = pd.read_excel(file, engine="openpyxl", sheet_name=sheet)
-                excel_worker.write_data(sheet_df)
-            wb.close()
-
-    return file_name
+def read_file_data(file_data):
+    return FileData(
+        name=file_data["name"],
+        author=file_data["author"],
+        ending=file_data["ending"],
+        date=file_data["data"]
+    )

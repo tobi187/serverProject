@@ -1,14 +1,12 @@
-from flask import Flask, redirect, url_for, render_template, request, send_file
+from flask import Flask, redirect, url_for, render_template, request, send_file, flash, send_from_directory
 from flask_httpauth import HTTPBasicAuth
+from werkzeug.utils import secure_filename
 from services.auth_service import do_auth
-from services.upload_service import create_output
 import os
-import io
 
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
-ALLOWED_EXTENSION = "xlsx"
 app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads")
 
 
@@ -20,11 +18,6 @@ app_data = {
     "project_name": "Starter Template",
     "keywords":     "flask, webapp, template, basic"
 }
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() == ALLOWED_EXTENSION
 
 
 @app.route("/")
@@ -46,32 +39,27 @@ def index():
 @app.route("/up", methods=["POST"])
 def upload():
     if request.method == "POST":
-        files = [f for f in request.files.values() if f.filename != ""]
-        if len(files) < 1:
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
             return redirect(url_for("index"))
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(url_for("index"))
+        if file:
+            name = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], name))
 
-        for file in files:
-            if not file or not allowed_file(file.filename):
-                return redirect(url_for("index"))
-
-        file_name = create_output(files, app.root_path)
-
-        return redirect(url_for("download_file", name=file_name))
+            return redirect(url_for("download_file", name=name))
 
 
 @app.route("/download_file/<name>")
 def download_file(name: str):
-    exel_data = io.BytesIO()
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], name)
 
-    with open(file_path, "rb") as data:
-        exel_data.write(data.read())
-        exel_data.seek(0)
-
-    os.remove(file_path)
-
-    return send_file(exel_data, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                     download_name='combined_reports.xlsx')
+    return send_from_directory()
 
 
 if __name__ == '__main__':
